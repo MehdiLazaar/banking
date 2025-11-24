@@ -16,7 +16,7 @@ public class ListClients {
         }
         this.clientRepository = clientRepository;
     }
-    public List<Client> execute(){
+    public List<Client> all(){
         List<Client> clients = clientRepository.findAll();
         return clients == null ? Collections.emptyList() : clients;
     }

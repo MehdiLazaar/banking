@@ -1,10 +1,15 @@
 package org.appynov.banking.domain.model;
 import com.github.f4b6a3.ulid.UlidCreator;
+import jakarta.validation.constraints.NotBlank;
 
 
 public class Client {
+
+    @NotBlank(message = "L'identifiant ne peut pas être vide")
     private String id;
+    @NotBlank(message = "Le nom de famille ne peut pas être vide")
     private String lastName;
+    @NotBlank(message = "Le prénom ne peut pas être vide")
     private String firstName;
 
     public Client(String lastName, String firstName) {
