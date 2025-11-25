@@ -14,14 +14,13 @@ public class CreateClient {
     }
 
     public Client execute(Client client) {
-        Objects.requireNonNull(client, "client doit etre non null");
+        Objects.requireNonNull(client, "client doit être non null");
+
         // prévention de doublon
-        if (client.getFirstName() != null && client.getLastName() != null) {
-            boolean exists = clientRepository.existsBy(client.getFirstName(), client.getLastName());
-            if (exists) {
-                throw new ClientAlreadyExistsException(client.getFirstName(),  client.getLastName() + "Client existe déjà");
-            }
+        if (clientRepository.existsBy(client.getFirstName(), client.getLastName())) {
+            throw new ClientAlreadyExistsException(client.getFirstName(), client.getLastName());
         }
+
         return clientRepository.save(client);
     }
 }

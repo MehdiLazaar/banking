@@ -1,9 +1,7 @@
 package org.appynov.banking.infrastructure.application.driving.web.error;
 
-import org.appynov.banking.exception.ClientAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.appynov.banking.infrastructure.application.driving.web.error.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,7 +30,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * ⚠️ Client déjà existant
+     * Client déjà existant
      * → 409 Conflict
      */
     @ExceptionHandler(org.appynov.banking.exception.ClientAlreadyExistsException.class)
@@ -48,7 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * ❗ Erreurs génériques
+     * Erreurs génériques
      * → 500 Internal Server Error
      */
     @ExceptionHandler(Exception.class)
@@ -57,7 +55,7 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                ex.getMessage()
+                "Erreur interne du serveur"
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
