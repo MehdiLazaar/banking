@@ -1,0 +1,10 @@
+# compose.yaml
+services:
+  database:
+    image: postgres:15.2
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_DB: bank
+      POSTGRES_PASSWORD: password
