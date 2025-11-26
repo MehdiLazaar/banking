@@ -12,7 +12,7 @@ public class AccountEntity {
     @Column(name = "id", length = 26)
     private String id;
 
-    @Column(name = "clientId", length = 26)
+    @Column(name = "client_id", length = 26)
     private String clientId;
 
     @Column(name = "balance")
@@ -46,8 +46,8 @@ public class AccountEntity {
         return clientId;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+    public void setClientId(String client_id) {
+        this.clientId = client_id;
     }
 
     public Double getBalance() {

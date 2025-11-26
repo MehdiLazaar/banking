@@ -24,7 +24,7 @@ public class ListAccounts {
         }
         // filtre
         return comptes.stream()
-                .filter(account -> clientId.equals(account.clientId()))
+                .filter(account -> clientId.equals(account.client_id()))
                 .collect(Collectors.toList());
     }
 }

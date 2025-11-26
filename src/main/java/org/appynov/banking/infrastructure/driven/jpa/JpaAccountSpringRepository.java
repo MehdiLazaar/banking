@@ -10,17 +10,22 @@ import java.util.Optional;
 public interface JpaAccountSpringRepository extends JpaRepository<AccountEntity, String> {
 
     // Trouve par b
-    List<AccountEntity> findByB(String b);
+    Optional<AccountEntity> findById(String id);
+    List<AccountEntity> findByClientId(String clientId);
 
-    // Trouve par b et c
-    Optional<AccountEntity> findByBAndC(String b, Integer c);
+    boolean existsById(String id);
+    boolean existsByClientId(String clientId);
 
-    // Trouve par b contenant une chaîne
-    List<AccountEntity> findByBContaining(String pattern);
+    Optional<AccountEntity> findByIdAndClientId(String id, String clientId);
+    Optional<AccountEntity> findByIdAndBalance(String id, Double balance);
+    Optional<AccountEntity> findByBalance(Double balance);
+    Optional<AccountEntity> findByBalanceAndClientId(Double balance, String clientId);
 
-    // Compte les demos avec un b
-    long countByB(String b);
+    List<AccountEntity> findByNomContaining(String nom);
+    List<AccountEntity> findByNomContainingAndBalance(String nom, Double balance);
+    List<AccountEntity> findByNomContainingAndBalanceAndClientId(String nom, Double balance, String clientId);
 
-    // Vérifie si un demo existe avec c
-    boolean existsByC(Integer c);
+
+    long countById(String id);
+    long countByClientId(String clientId);
 }

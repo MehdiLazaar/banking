@@ -7,7 +7,7 @@ public record Account(
         @NotBlank(message = "L'identifiant de compte ne peut pas être vide")
         String id,
         @NotBlank(message = "L'identifiant du client ne peut pas être vide")
-        String clientId,
+        String client_id,
         @NotBlank(message = "Le solde peut etre negatif")
         Double balance,
         @NotBlank(message = "Le type de compte ne peut pas être vide")
@@ -15,8 +15,8 @@ public record Account(
         @NotBlank(message = "Le nom du compte ne peut pas être vide")
         String nom
 ) {
-    public Account(String clientId, double balance, AccountType type, String nom) {
-        this(UlidCreator.getUlid().toString(), clientId, balance, type, nom);
+    public Account(String client_id, double balance, AccountType type, String nom) {
+        this(UlidCreator.getUlid().toString(), client_id, balance, type, nom);
     }
 
     public enum AccountType {

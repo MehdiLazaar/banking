@@ -27,7 +27,7 @@ public class JpaAccountRepository implements AccountRepository {
     public Account creationAccount(Account account) {
         AccountEntity entity = new AccountEntity(
                 account.id(),
-                account.clientId(),
+                account.client_id(),
                 account.balance(),
                 account.type().name(),
                 account.nom()
@@ -45,7 +45,6 @@ public class JpaAccountRepository implements AccountRepository {
     private Account toDomain(AccountEntity entity) {
         return new Account(
                 entity.getId(),
-                entity.getClientId(),
                 entity.getBalance(),
                 Account.AccountType.valueOf(entity.getType()),
                 entity.getNom()

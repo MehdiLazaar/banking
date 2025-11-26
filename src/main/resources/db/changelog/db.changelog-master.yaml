@@ -22,8 +22,13 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+
+  - changeSet:
+      id: 20251126000100
+      author: author
+      changes:
         - createTable:
-            tableName: accounts
+            tableName: comptes
             columns:
               - column:
                   name: id
@@ -32,10 +37,12 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: clientId
+                  name: client_id
                   type: varchar(26)
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_accounts_clients
+                    references: clients(id)
               - column:
                   name: balance
                   type: double
