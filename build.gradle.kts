@@ -27,6 +27,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-liquibase")
     implementation("org.postgresql:postgresql")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

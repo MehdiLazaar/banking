@@ -31,7 +31,7 @@ public class ClientController {
     @Operation(summary = "Liste tous les clients")
     @ApiResponse(responseCode = "200", description = "Liste des clients")
     public List<ClientDTO> getClients() {
-        return listClients.all()
+        return listClients.findAll()
                 .stream()
                 .map(client -> new ClientDTO(
                         client.getId(),

@@ -22,3 +22,32 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: id
+                  type: varchar(26)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: clientId
+                  type: varchar(26)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nom
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
