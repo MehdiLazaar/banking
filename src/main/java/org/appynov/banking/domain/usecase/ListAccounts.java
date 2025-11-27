@@ -15,7 +15,7 @@ public class ListAccounts {
         this.accountRepository = accountRepository;
     }
 
-    public static List<Account> getAccounts(String clientId) {
+    public List<Account> getAccounts(String clientId) {
         List<Account> comptes = accountRepository.getAccounts();
         if (comptes == null) return Collections.emptyList();
 
