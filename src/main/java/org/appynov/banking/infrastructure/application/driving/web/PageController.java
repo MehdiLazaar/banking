@@ -1,6 +1,8 @@
 package org.appynov.banking.infrastructure.application.driving.web;
 
+import org.appynov.banking.domain.model.Client;
 import org.appynov.banking.domain.usecase.CreateAccount;
+import org.appynov.banking.domain.usecase.CreateClient;
 import org.appynov.banking.domain.usecase.ListAccounts;
 import org.appynov.banking.domain.usecase.ListClients;
 import org.appynov.banking.infrastructure.application.driving.web.dto.AccountDTO;
@@ -18,11 +20,14 @@ public class PageController {
     private final CreateAccount createAccount;
     private final ListAccounts listAccounts;
     private final ListClients listClients;
+    private final CreateClient createClient; // ajouter le use case
 
-    public PageController(ListAccounts listAccounts, ListClients listClients, CreateAccount createAccount) {
+    public PageController(ListAccounts listAccounts, ListClients listClients,
+                          CreateAccount createAccount, CreateClient createClient) {
         this.createAccount = createAccount;
         this.listAccounts = listAccounts;
         this.listClients = listClients;
+        this.createClient = createClient; // initialiser
     }
 
     // Page d'accueil : liste des clients
@@ -34,6 +39,14 @@ public class PageController {
                 .toList();
         model.addAttribute("clients", clients);
         return "index";
+    }
+
+    // POST pour créer un nouveau client
+    @PostMapping("/clients/add")
+    public String addClient(@RequestParam String firstName,
+                            @RequestParam String lastName) {
+        createClient.execute(new Client(lastName, firstName));
+        return "redirect:/index"; // Recharge la page avec la liste mise à jour
     }
 
     // Page comptes pour un client
@@ -57,9 +70,6 @@ public class PageController {
 
         return "accounts";
     }
-
-
-
 
     // Route POST pour créer un compte depuis le formulaire Thymeleaf
     @PostMapping("/clients/{id}/create-account")

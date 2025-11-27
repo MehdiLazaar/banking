@@ -32,8 +32,16 @@ public class AccountController {
     // Créer un compte
     @PostMapping("/accounts")
     public ResponseEntity<AccountDTO> create(@RequestBody CreateAccountRequest request) {
-        var account = createAccountUseCase.createAccount(request.toDomain());
-        return new ResponseEntity<>(AccountDTO.toDTO(account), HttpStatus.CREATED);
+        try {
+            var account = createAccountUseCase.createAccount(request.toDomain());
+            return new ResponseEntity<>(AccountDTO.toDTO(account), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
     }
     @GetMapping("/accounts")
     public ResponseEntity<List<AccountDTO>> list(@RequestParam String clientId) {

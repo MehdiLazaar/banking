@@ -1,68 +1,128 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr" x-data="accountManager()">
 <head>
     <meta charset="UTF-8">
     <title>Comptes du client</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 <body>
-<div class="container mt-4">
-    <a href="/index" class="btn btn-secondary mb-3">⬅ Retour à la liste des clients</a>
 
-    <h1>Comptes du client</h1>
-    <h3 th:text="${client.firstName + ' ' + client.lastName}"></h3>
+<div class="container mt-5">
 
+    <a href="/index" class="btn btn-secondary mb-4">⬅ Retour à la liste des clients</a>
+
+    <h2 class="text-primary fw-bold">Comptes du client</h2>
+    <h4 class="mb-4" th:text="${client.firstName + ' ' + client.lastName}"></h4>
 
     <!-- Tableau des comptes -->
-    <table class="table table-bordered mt-3" th:if="${!#lists.isEmpty(accounts)}">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Type</th>
-            <th>Nom</th>
-            <th>Solde (€)</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="acc : ${accounts}">
-            <td th:text="${acc.id}"></td>
-            <td th:text="${acc.type}"></td>
-            <td th:text="${acc.nom}"></td>
-            <td th:text="${acc.balance}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-striped table-bordered align-middle" id="accounts-table">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Nom</th>
+                <th>Solde (€)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="acc : ${accounts}" :key="[[${acc.id}]]">
+                <td th:text="${acc.id}"></td>
+                <td th:text="${acc.type}"></td>
+                <td th:text="${acc.nom}"></td>
+                <td th:text="${acc.balance}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-    <div th:if="${#lists.isEmpty(accounts)}" class="alert alert-info mt-3">
+    <div th:if="${#lists.isEmpty(accounts)}" class="alert alert-info mt-3 shadow-sm">
         Aucun compte trouvé pour ce client.
     </div>
 
-    <!-- Formulaire pour créer un nouveau compte -->
-    <h3 class="mt-4">Créer un nouveau compte</h3>
-    <form th:action="@{/clients/{id}/create-account(id=${client.id})}" method="post" class="mt-3">
-        <div class="mb-3">
-            <label class="form-label">Type :</label>
-            <select class="form-select" name="type">
-                <option value="">--Choisir--</option>
-                <option value="COURANT">COURANT</option>
-                <option value="LIVRET_A">LIVRET A</option>
-                <option value="PEA">PEA</option>
-                <option value="PEL">PEL</option>
-            </select>
-        </div>
+    <!-- Formulaire création compte -->
+    <div class="card mt-5 shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Créer un nouveau compte</h4>
+            <form @submit.prevent="createAccount">
 
-        <div class="mb-3">
-            <label class="form-label">Nom :</label>
-            <input class="form-control" type="text" name="nom" required>
-        </div>
+                <div class="mb-3">
+                    <label class="form-label">Type :</label>
+                    <select class="form-select" x-model="newAccount.type" required>
+                        <option value="">--Choisir--</option>
+                        <option value="COURANT">COURANT</option>
+                        <option value="LIVRET_A">LIVRET A</option>
+                        <option value="PEA">PEA</option>
+                        <option value="PEL">PEL</option>
+                    </select>
+                </div>
 
-        <div class="mb-3">
-            <label class="form-label">Solde (€) :</label>
-            <input class="form-control" type="number" name="balance" step="0.01" required>
-        </div>
+                <div class="mb-3">
+                    <label class="form-label">Nom :</label>
+                    <input class="form-control" type="text" x-model="newAccount.nom" readonly>
+                </div>
 
-        <button type="submit" class="btn btn-success">Créer le compte</button>
-    </form>
+                <div class="mb-3">
+                    <label class="form-label">Solde (€) :</label>
+                    <input class="form-control" type="number" x-model="newAccount.balance" step="0.01" required>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 fw-bold">Créer le compte</button>
+            </form>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    function accountManager() {
+        return {
+            clientId: "[[${client.id}]]",
+            newAccount: {
+                type: '',
+                nom: "[[${client.firstName + ' ' + client.lastName}]]",
+                balance: null
+            },
+
+            createAccount() {
+                fetch('/api/accounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        client_id: this.clientId,
+                        type: this.newAccount.type,
+                        nom: this.newAccount.nom,
+                        balance: this.newAccount.balance
+                    })
+                })
+                    .then(res => {
+                        if (!res.ok) return res.json().then(err => {throw err});
+                        return res.json();
+                    })
+                    .then(account => {
+                        const tbody = document.querySelector('#accounts-table tbody');
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                        <td>${account.id}</td>
+                        <td>${account.type}</td>
+                        <td>${account.nom}</td>
+                        <td>${account.balance}</td>
+                    `;
+                        tbody.appendChild(row);
+
+                        // Réinitialiser type et solde, garder le nom
+                        this.newAccount.type = '';
+                        this.newAccount.balance = null;
+                    })
+                    .catch(err => {
+                        console.error("Erreur lors de la création du compte :", err);
+                        alert("Erreur lors de la création du compte : " + (err.message || JSON.stringify(err)));
+                    });
+            }
+        }
+    }
+</script>
+
 </body>
 </html>

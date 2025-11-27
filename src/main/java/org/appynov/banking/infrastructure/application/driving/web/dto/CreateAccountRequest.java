@@ -9,6 +9,13 @@ public record CreateAccountRequest(
         String nom
 ) {
     public Account toDomain() {
+        // Vérifie que le type correspond à l'enum
+        Account.AccountType accountType;
+        try {
+            accountType = Account.AccountType.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Type de compte invalide : " + type);
+        }
         return new Account(
                 client_id,
                 balance,
