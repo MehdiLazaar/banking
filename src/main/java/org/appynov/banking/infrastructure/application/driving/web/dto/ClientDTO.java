@@ -7,7 +7,7 @@ public record ClientDTO(
         String firstName,
         String lastName
 ) {
-    public static ClientDTO fromDTO(Client client) {
+    public static ClientDTO toDTO(Client client) {
         return new ClientDTO(
                 client.getId(),
                 client.getFirstName(),
@@ -16,7 +16,7 @@ public record ClientDTO(
     }
 
     // Convertit un ClientDTO en ClientDTO (utile si tu veux conserver le pattern)
-    public static Client toDTO(ClientDTO clientDTO) {
+    public static Client fromDTO(ClientDTO clientDTO) {
         return new Client(
                 clientDTO.id(),
                 clientDTO.firstName(),

@@ -9,7 +9,16 @@ public record AccountDTO(
         String type,
         String nom
 ) {
-    public static AccountDTO fromDomain(Account account) {
+    public static Account fromDTO(Account account) {
+        return new Account(
+                account.id(),
+                account.client_id(),
+                account.balance(),
+                account.type(),
+                account.nom()
+        );
+    }
+    public static AccountDTO toDTO(Account account) {
         return new AccountDTO(
                 account.id(),
                 account.client_id(),

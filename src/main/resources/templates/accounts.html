@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Comptes du client</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <a href="/index" class="btn btn-secondary mb-3">⬅ Retour à la liste des clients</a>
+
+    <h1>Comptes du client</h1>
+    <h3 th:text="${client.firstName + ' ' + client.lastName}"></h3>
+
+
+    <!-- Tableau des comptes -->
+    <table class="table table-bordered mt-3" th:if="${!#lists.isEmpty(accounts)}">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Nom</th>
+            <th>Solde (€)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="acc : ${accounts}">
+            <td th:text="${acc.id}"></td>
+            <td th:text="${acc.type}"></td>
+            <td th:text="${acc.nom}"></td>
+            <td th:text="${acc.balance}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${#lists.isEmpty(accounts)}" class="alert alert-info mt-3">
+        Aucun compte trouvé pour ce client.
+    </div>
+
+    <!-- Formulaire pour créer un nouveau compte -->
+    <h3 class="mt-4">Créer un nouveau compte</h3>
+    <form th:action="@{/clients/{id}/create-account(id=${client.id})}" method="post" class="mt-3">
+        <div class="mb-3">
+            <label class="form-label">Type :</label>
+            <select class="form-select" name="type">
+                <option value="">--Choisir--</option>
+                <option value="COURANT">COURANT</option>
+                <option value="LIVRET_A">LIVRET A</option>
+                <option value="PEA">PEA</option>
+                <option value="PEL">PEL</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nom :</label>
+            <input class="form-control" type="text" name="nom" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Solde (€) :</label>
+            <input class="form-control" type="number" name="balance" step="0.01" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Créer le compte</button>
+    </form>
+</div>
+</body>
+</html>
