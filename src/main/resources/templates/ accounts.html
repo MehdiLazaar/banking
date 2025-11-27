@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Comptes du client</title>
+</head>
+<body>
+<h1 th:text="'Comptes de : ' + ${client.firstName()} + ' ' + ${client.lastName()}"></h1>
+
+<table border="1">
+    <tr>
+        <th>ID Compte</th>
+        <th>Type</th>
+        <th>Solde</th>
+        <th>Nom</th>
+    </tr>
+
+    <tr th:each="account : ${accounts}">
+        <td th:text="${account.id()}"></td>
+        <td th:text="${account.type()}"></td>
+        <td th:text="${account.balance()}"></td>
+        <td th:text="${account.nom()}"></td>
+    </tr>
+</table>
+
+<br/>
+<a href="\banking\src\main\resources\templates\index.html">Retour a la liste des clients</a>
+
+</body>
+</html>
