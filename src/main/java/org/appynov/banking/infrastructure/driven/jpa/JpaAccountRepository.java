@@ -45,6 +45,7 @@ public class JpaAccountRepository implements AccountRepository {
     private Account toDomain(AccountEntity entity) {
         return new Account(
                 entity.getId(),
+                entity.getClientId(),
                 entity.getBalance(),
                 Account.AccountType.valueOf(entity.getType()),
                 entity.getNom()

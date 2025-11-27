@@ -19,14 +19,14 @@ public class AccountController {
         this.listAccountsUseCase = listAccountsUseCase;
     }
 
-    // Créer un compte
-    @PostMapping
+    @PostMapping("/accounts")
     public ResponseEntity<AccountDTO> create(@RequestBody CreateAccountRequest request) {
         var account = createAccountUseCase.createAccount(request.toDomain());
         return new ResponseEntity<>(AccountDTO.fromDomain(account), HttpStatus.CREATED);
     }
+
     @GetMapping("/accounts")
-    public ResponseEntity<Iterable<AccountDTO>> list(@PathVariable String clientId) {
+    public ResponseEntity<Iterable<AccountDTO>> list(@RequestParam(required = false) String clientId) {
         var accounts = listAccountsUseCase.getAccounts(clientId)
                 .stream().map(AccountDTO::fromDomain)
                 .toList();

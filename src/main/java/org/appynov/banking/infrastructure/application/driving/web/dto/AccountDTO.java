@@ -5,8 +5,8 @@ import org.appynov.banking.domain.model.Account;
 public record AccountDTO(
         String id,
         String client_id,
-        double type,
-        String balance,
+        double balance,
+        String type,
         String nom
 ) {
     public static AccountDTO fromDomain(Account account) {
