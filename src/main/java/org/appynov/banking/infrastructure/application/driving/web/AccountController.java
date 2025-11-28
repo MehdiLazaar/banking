@@ -29,7 +29,6 @@ public class AccountController {
         this.listClients = listClients;
     }
 
-    // Créer un compte
     @PostMapping("/accounts")
     public ResponseEntity<AccountDTO> create(@RequestBody CreateAccountRequest request) {
         try {
@@ -43,17 +42,17 @@ public class AccountController {
                     .body(null);
         }
     }
-    @GetMapping("/accounts")
+    /*@GetMapping("/accounts")
     public ResponseEntity<List<AccountDTO>> list(@RequestParam String clientId) {
         List<AccountDTO> accounts = listAccountsUseCase.getAccounts(clientId)
                 .stream()
                 .map(AccountDTO::toDTO)
                 .toList();
         return ResponseEntity.ok(accounts);
-    }
+    }*/
 
 
-    // Récupérer les infos d’un client
+    // Récupérer les infos d un client
     @GetMapping("/clients/{id}")
     public ResponseEntity<ClientDTO> getClient(@PathVariable String id) {
         Optional<ClientDTO> client = listClients.findAll().stream()

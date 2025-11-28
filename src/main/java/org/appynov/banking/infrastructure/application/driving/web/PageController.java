@@ -15,25 +15,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 public class PageController {
     private final CreateAccount createAccount;
     private final ListAccounts listAccounts;
     private final ListClients listClients;
-    private final CreateClient createClient; // ajouter le use case
+    private final CreateClient createClient;
 
     public PageController(ListAccounts listAccounts, ListClients listClients,
                           CreateAccount createAccount, CreateClient createClient) {
         this.createAccount = createAccount;
         this.listAccounts = listAccounts;
         this.listClients = listClients;
-        this.createClient = createClient; // initialiser
+        this.createClient = createClient;
     }
 
-    // Page d'accueil : liste des clients
     @GetMapping("/index")
     public String index(Model model) {
-        var clients = listClients.findAll()
+        List<ClientDTO> clients = listClients.findAll()
                 .stream()
                 .map(ClientDTO::toDTO)
                 .toList();
@@ -41,19 +43,17 @@ public class PageController {
         return "index";
     }
 
-    // POST pour créer un nouveau client
     @PostMapping("/clients/add")
     public String addClient(@RequestParam String firstName,
                             @RequestParam String lastName) {
         createClient.execute(new Client(lastName, firstName));
-        return "redirect:/index"; // Recharge la page avec la liste mise à jour
+        return "redirect:/index";
     }
 
-    // Page comptes pour un client
     @GetMapping("/clients/{id}/view")
     public String showClientAccounts(@PathVariable String id, Model model) {
 
-        var client = listClients.findAll().stream()
+        Optional<Client> client = listClients.findAll().stream()
                 .filter(c -> c.getId().equals(id))
                 .findFirst();
 
@@ -61,7 +61,7 @@ public class PageController {
             return "redirect:/index";
         }
 
-        var accounts = listAccounts.getAccounts(id).stream()
+        List<AccountDTO> accounts = listAccounts.getAccounts(id).stream()
                 .map(AccountDTO::toDTO)
                 .toList();
 
@@ -71,13 +71,12 @@ public class PageController {
         return "accounts";
     }
 
-    // Route POST pour créer un compte depuis le formulaire Thymeleaf
     @PostMapping("/clients/{id}/create-account")
     public String createAccountForClient(@PathVariable String id,
                                          @RequestParam String type,
                                          @RequestParam String nom,
                                          @RequestParam double balance) {
-        var request = new CreateAccountRequest(id, balance, type, nom);
+        CreateAccountRequest request = new CreateAccountRequest(id, balance, type, nom);
         createAccount.createAccount(request.toDomain());
 
         return "redirect:/clients/" + id + "/view";
