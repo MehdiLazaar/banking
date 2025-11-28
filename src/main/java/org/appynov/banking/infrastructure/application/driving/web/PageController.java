@@ -50,7 +50,7 @@ public class PageController {
         return "redirect:/index";
     }
 
-    @GetMapping("/clients/{id}/view")
+    @GetMapping("/clients/{id}/compteClient")
     public String showClientAccounts(@PathVariable String id, Model model) {
 
         Optional<Client> client = listClients.findAll().stream()
@@ -71,7 +71,7 @@ public class PageController {
         return "accounts";
     }
 
-    @PostMapping("/clients/{id}/create-account")
+    @PostMapping("/clients/{id}/compteClient")
     public String createAccountForClient(@PathVariable String id,
                                          @RequestParam String type,
                                          @RequestParam String nom,
@@ -79,6 +79,6 @@ public class PageController {
         CreateAccountRequest request = new CreateAccountRequest(id, balance, type, nom);
         createAccount.createAccount(request.toDomain());
 
-        return "redirect:/clients/" + id + "/view";
+        return "redirect:/clients/" + id + "/compteClient";
     }
 }

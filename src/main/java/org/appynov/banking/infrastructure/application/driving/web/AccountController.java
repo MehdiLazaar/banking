@@ -17,22 +17,19 @@ import java.util.Optional;
 @RequestMapping("/api") // Toutes les routes REST passent par /api
 public class AccountController {
 
-    private final CreateAccount createAccountUseCase;
-    private final ListAccounts listAccountsUseCase;
+    private final CreateAccount createAccount;
     private final ListClients listClients;
 
-    public AccountController(CreateAccount createAccountUseCase,
-                             ListAccounts listAccountsUseCase,
+    public AccountController(CreateAccount createAccount,
                              ListClients listClients) {
-        this.createAccountUseCase = createAccountUseCase;
-        this.listAccountsUseCase = listAccountsUseCase;
+        this.createAccount = createAccount;
         this.listClients = listClients;
     }
 
     @PostMapping("/accounts")
     public ResponseEntity<AccountDTO> create(@RequestBody CreateAccountRequest request) {
         try {
-            var account = createAccountUseCase.createAccount(request.toDomain());
+            var account = createAccount.createAccount(request.toDomain());
             return new ResponseEntity<>(AccountDTO.toDTO(account), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -42,16 +39,6 @@ public class AccountController {
                     .body(null);
         }
     }
-    /*@GetMapping("/accounts")
-    public ResponseEntity<List<AccountDTO>> list(@RequestParam String clientId) {
-        List<AccountDTO> accounts = listAccountsUseCase.getAccounts(clientId)
-                .stream()
-                .map(AccountDTO::toDTO)
-                .toList();
-        return ResponseEntity.ok(accounts);
-    }*/
-
-
     // Récupérer les infos d un client
     @GetMapping("/clients/{id}")
     public ResponseEntity<ClientDTO> getClient(@PathVariable String id) {
