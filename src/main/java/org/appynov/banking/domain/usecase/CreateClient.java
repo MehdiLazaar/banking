@@ -16,7 +16,6 @@ public class CreateClient {
     public Client execute(Client client) {
         Objects.requireNonNull(client, "client doit être non null");
 
-        // prévention de doublon
         if (clientRepository.existsBy(client.getFirstName(), client.getLastName())) {
             throw new ClientAlreadyExistsException(client.getFirstName(), client.getLastName());
         }

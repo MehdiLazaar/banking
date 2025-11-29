@@ -1,0 +1,26 @@
+package org.appynov.banking.domain.model;
+
+import aQute.bnd.annotation.spi.ServiceConsumer;
+import com.github.f4b6a3.ulid.UlidCreator;
+import jakarta.validation.constraints.NotBlank;
+
+public record User(
+        @NotBlank(message = "L'identifiant utilisateur ne peut pas être vide")
+        String id,
+        @NotBlank(message = "Le nom d'utilisateur ne peut pas être vide")
+        String username,
+        @NotBlank(message = "Le hash du mot de passe ne peut pas être vide")
+        String mdpHash,
+        @NotBlank(message = "Idf de l'utilisateur ne peuvent pas être vides")
+        String clientId
+) {
+    public User (String id, String username, String mdpHash, String clientId) {
+        this.id = id;
+        this.username=username;
+        this.mdpHash=mdpHash;
+        this.clientId=clientId;
+    }
+    public User(String username, String mdpHash, String clientId){
+        this(UlidCreator.getUlid().toString(), username, mdpHash, clientId);
+    }
+}
