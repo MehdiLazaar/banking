@@ -32,6 +32,16 @@ public class PageController {
         this.listClients = listClients;
         this.createClient = createClient;
     }
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
+    }
+
 
     @GetMapping("/index")
     public String index(Model model) {

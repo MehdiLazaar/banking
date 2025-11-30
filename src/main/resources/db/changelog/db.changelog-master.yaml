@@ -58,3 +58,36 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+
+  - changeSet:
+      id: 2025113001000200
+      author: author
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: varchar(26)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_users_clients
+                    references: clients(id)
+

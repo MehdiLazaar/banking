@@ -11,4 +11,7 @@ public record ErrorResponse(
     public ErrorResponse(int status, String error, String message) {
         this(status, error, message, Instant.now());
     }
+    public static ErrorResponse basic(int status, String error, String message,Instant timestamp) {
+        return new ErrorResponse(status, error, message,timestamp);
+    }
 }

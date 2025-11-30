@@ -49,7 +49,6 @@ public class AccountController {
         return client.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    // Gestion simple des exceptions
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());

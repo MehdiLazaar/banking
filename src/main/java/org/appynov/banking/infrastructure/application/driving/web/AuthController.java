@@ -37,7 +37,7 @@ public class AuthController {
     @PostMapping("/register")
     public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         String encodedPassword = passwordEncoder.encode(request.password());
-        var user = createUser.create(request.login(), encodedPassword, request.lastName(), request.firstName()
+        var user = createUser.create(request.username(), encodedPassword, request.lastName(), request.firstName()
         );
         String token = jwt.generate(user.username(),
                 Map.of("username", user.username(), "clientId", user.clientId()));
@@ -46,7 +46,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        var user = findUser.by(request.login(), request.password());
+        var user = findUser.by(request.username(), request.password());
         String token = jwt.generate(user.username(),
                 Map.of("username", user.username(),
                         "clientId", user.clientId()

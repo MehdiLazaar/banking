@@ -3,7 +3,8 @@ package org.appynov.banking.infrastructure.application.driving.web.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
@@ -11,7 +12,9 @@ import java.util.Date;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-@Service
+import static org.springframework.security.core.context.SecurityContextHolder.getContext;
+
+@Component
 public class JwtTokenService {
     private final SecretKey key;
     private final long expirationSeconds;
@@ -20,6 +23,9 @@ public class JwtTokenService {
             @Value("${security.jwt.secret}") String secret,
             @Value("${security.jwt.expiration-seconds}") long expirationSeconds
     ) {
+        if (secret.length() < 32) {
+            secret = String.format("%-32s", secret).replace(' ', 'x');
+        }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(UTF_8));
         this.expirationSeconds = expirationSeconds;
     }
@@ -36,5 +42,18 @@ public class JwtTokenService {
 
     public Map<String, Object> parseClaims(String token) {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+    }
+    public static String extractClientId() {
+        var auth = getContext().getAuthentication();
+        if (auth == null || auth.getPrincipal() == null) {
+            throw new AuthenticationException("Invalid token") {
+            };
+        }
+        Object principal = auth.getPrincipal();
+        if (principal instanceof JwtAuthenticationFilter.MyBankPrincipal p) {
+            return p.clientId();
+        }
+        throw new AuthenticationException("Invalid token") {
+        };
     }
 }
