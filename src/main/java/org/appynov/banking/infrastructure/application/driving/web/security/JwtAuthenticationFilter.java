@@ -5,7 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.appynov.banking.domain.model.Client;
 import org.appynov.banking.infrastructure.driven.jpa.JpaUserSpringRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -30,13 +28,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, java.io.IOException {
-        String path = request.getServletPath();
-
-        // Ignorer les routes publiques
-        if (path.equals("/login") || path.equals("/register") || path.startsWith("/api/auth")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
         String queryAuth = request.getParameter("authorization");
         if ((auth != null && auth.startsWith("Bearer ")) || queryAuth != null) {

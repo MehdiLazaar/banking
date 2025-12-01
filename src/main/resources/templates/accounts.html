@@ -10,7 +10,7 @@
 
 <div class="container mt-5">
 
-    <a href="/index" class="btn btn-secondary mb-4">⬅ Retour à la liste des clients</a>
+    <button class="btn btn-danger mb-4" @click="logout()">Déconnexion</button>
 
     <h2 class="text-primary fw-bold">Comptes du client</h2>
     <h4 class="mb-4" th:text="${client.firstName + ' ' + client.lastName}"></h4>
@@ -74,7 +74,7 @@
     </div>
 
 </div>
-
+<script src="/js/app.js"></script>
 <script>
     function accountManager() {
         return {
@@ -84,11 +84,22 @@
                 nom: "[[${client.firstName + ' ' + client.lastName}]]",
                 balance: null
             },
-
             createAccount() {
-                fetch('/api/accounts', {
+                if (!this.newAccount.type || this.newAccount.balance === null) {
+                    alert("Veuillez remplir tous les champs obligatoires !");
+                    return;
+                }
+                // Vérifie que le token existe
+                if (!Auth.token) {
+                    alert("Vous devez être connecté pour créer un compte !");
+                    return;
+                }
+                fetchWithRedirect('/api/accounts', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + Auth.token
+                    },
                     body: JSON.stringify({
                         client_id: this.clientId,
                         type: this.newAccount.type,
@@ -96,22 +107,16 @@
                         balance: this.newAccount.balance
                     })
                 })
-                    .then(res => {
-                        if (!res.ok) return res.json().then(err => {throw err});
-                        return res.json();
-                    })
                     .then(account => {
                         const tbody = document.querySelector('#accounts-table tbody');
                         const row = document.createElement('tr');
-                        row.innerHTML = `
-                        <td>${account.id}</td>
-                        <td>${account.type}</td>
-                        <td>${account.nom}</td>
-                        <td>${account.balance}</td>
-                    `;
+                        row.innerHTML = `<td>${account.id}</td>
+                         <td>${account.type}</td>
+                         <td>${account.nom}</td>
+                         <td>${account.balance}</td>`;
                         tbody.appendChild(row);
 
-                        // Réinitialiser type et solde, garder le nom
+                        // Réinitialiser type et solde
                         this.newAccount.type = '';
                         this.newAccount.balance = null;
                     })
@@ -119,6 +124,9 @@
                         console.error("Erreur lors de la création du compte :", err);
                         alert("Erreur lors de la création du compte : " + (err.message || JSON.stringify(err)));
                     });
+            },
+            logout() {
+                Auth.logout();
             }
         }
     }
