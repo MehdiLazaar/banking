@@ -30,6 +30,9 @@
             </button>
         </div>
     </form>
+    <div class="grid mt-3">
+        <button type="button" class="secondary" @click="gotoMarket()">Voir Market</button>
+    </div>
     <small x-show="error" x-text="error" style="color: var(--pico-del-color);"></small>
     <p>Pas encore de compte ? <a href="/register">Créer un compte</a></p>
 </main>
@@ -70,6 +73,9 @@
                         this.error = msg;
                         this.loading = false;
                     });
+            },
+            gotoMarket() {
+                window.location.href = '/market';
             }
         }
     }
