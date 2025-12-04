@@ -2,24 +2,28 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="fr" x-data="accountManager()">
 <head>
     <meta charset="UTF-8">
-    <title>Comptes du client</title>
+    <title>Comptes et Actions du client</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        table { max-height: 300px; overflow-y: auto; }
+    </style>
 </head>
-<body>
+<body class="bg-light">
 
-<div class="container mt-5">
+<div class="container py-5">
 
-    <!-- Bouton déconnexion -->
-    <button class="btn btn-danger mb-4" @click="logout()">Déconnexion</button>
+    <!-- Déconnexion -->
+    <div class="d-flex justify-content-end mb-4">
+        <button class="btn btn-danger" @click="logout()">Déconnexion</button>
+    </div>
 
-    <!-- Titres -->
     <h2 class="text-primary fw-bold">Comptes du client</h2>
     <h4 class="mb-4" th:text="${client.firstName + ' ' + client.lastName}"></h4>
 
     <!-- Tableau des comptes -->
-    <div class="table-responsive shadow-sm rounded">
-        <table class="table table-striped table-bordered align-middle" id="accounts-table">
+    <div class="table-responsive shadow-sm rounded mb-4">
+        <table class="table table-striped table-bordered align-middle">
             <thead class="table-dark">
             <tr>
                 <th>ID</th>
@@ -39,14 +43,33 @@
         </table>
     </div>
 
-    <div th:if="${#lists.isEmpty(accounts)}" class="alert alert-info mt-3 shadow-sm">
-        Aucun compte trouvé pour ce client.
+    <!-- Tableau des actions du client -->
+    <h4 class="text-primary fw-bold mb-2">Actions créées</h4>
+    <div class="table-responsive shadow-sm rounded mb-4">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-primary">
+            <tr>
+                <th>Symbole</th>
+                <th>Nom</th>
+                <th>Prix (€)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <template x-for="a in actions" :key="a.id">
+                <tr>
+                    <td x-text="a.symbol"></td>
+                    <td x-text="a.nom"></td>
+                    <td x-text="a.prix + ' €'"></td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
     </div>
 
     <!-- Formulaire création compte -->
-    <div class="card mt-5 shadow-sm">
+    <div class="card mb-4 shadow-sm">
         <div class="card-body">
-            <h4 class="card-title mb-4">Créer un nouveau compte</h4>
+            <h5 class="card-title mb-4">Créer un nouveau compte</h5>
             <form @submit.prevent="createAccount">
                 <div class="mb-3">
                     <label class="form-label">Type :</label>
@@ -58,25 +81,22 @@
                         <option value="PEL">PEL</option>
                     </select>
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label">Nom :</label>
                     <input class="form-control" type="text" x-model="newAccount.nom" readonly>
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label">Solde (€) :</label>
                     <input class="form-control" type="number" x-model="newAccount.balance" step="0.01" required>
                 </div>
-
-                <button type="submit" class="btn btn-success w-100 fw-bold">Créer le compte</button>
+                <button type="submit" class="btn btn-success w-100">Créer le compte</button>
             </form>
         </div>
     </div>
 
     <!-- Bouton pour créer une action -->
-    <div class="mt-4">
-        <button class="btn btn-primary w-100 fw-bold" @click="goToActions()">Créer mon action</button>
+    <div class="d-grid">
+        <button class="btn btn-primary" @click="goToActions()">Créer mon action</button>
     </div>
 
 </div>
@@ -85,23 +105,18 @@
     function accountManager() {
         return {
             clientId: "[[${client.id}]]",
-            newAccount: {
-                type: '',
-                nom: "[[${client.firstName + ' ' + client.lastName}]]",
-                balance: null
-            },
+            actions: JSON.parse(localStorage.getItem('myActions') || '[]'),
+            newAccount: { type: '', nom: "[[${client.firstName + ' ' + client.lastName}]]", balance: null },
 
-            // Création compte
             createAccount() {
                 if (!this.newAccount.type || this.newAccount.balance === null) {
-                    alert("Veuillez remplir tous les champs obligatoires !");
+                    alert("Veuillez remplir tous les champs !");
                     return;
                 }
                 if (!Auth.token) {
-                    alert("Vous devez être connecté pour créer un compte !");
+                    alert("Vous devez être connecté !");
                     return;
                 }
-
                 fetch('/api/accounts', {
                     method: 'POST',
                     headers: {
@@ -119,54 +134,23 @@
                     .then(account => {
                         const tbody = document.querySelector('#accounts-table tbody');
                         const row = document.createElement('tr');
-                        row.innerHTML = `<td>${account.id}</td>
-                                     <td>${account.type}</td>
-                                     <td>${account.nom}</td>
-                                     <td>${account.balance}</td>`;
+                        row.innerHTML = `<td>${account.id}</td><td>${account.type}</td><td>${account.nom}</td><td>${account.balance}</td>`;
                         tbody.appendChild(row);
-
                         this.newAccount.type = '';
                         this.newAccount.balance = null;
                     })
-                    .catch(err => {
-                        console.error("Erreur lors de la création du compte :", err);
-                        alert("Erreur lors de la création du compte : " + (err.message || JSON.stringify(err)));
-                    });
+                    .catch(err => alert("Erreur lors de la création du compte : " + err));
             },
 
-            // Déconnexion
-            logout() {
-                Auth.logout();
-            },
-
-            // Redirection vers /actions/courant pour créer une action
             goToActions() {
                 const token = localStorage.getItem('jwt');
-                if (!token) {
-                    alert("Vous devez être connecté pour créer une action !");
-                    return;
-                }
+                if (!token) return alert("Vous devez être connecté !");
+                window.location.href = '/actions';
+            },
 
-                fetch('/api/actions/courant', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    }
-                })
-                    .then(res => {
-                        if (!res.ok) throw new Error("Non autorisé ou problème serveur");
-                        return res.json();
-                    })
-                    .then(actions => {
-                        localStorage.setItem('myActions', JSON.stringify(actions));
-                        window.location.href = '/actions';
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        alert("Impossible de récupérer vos actions : " + err.message);
-                    });
+            logout() {
+                Auth.logout();
             }
-
         }
     }
 </script>

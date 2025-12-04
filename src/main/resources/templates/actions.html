@@ -5,16 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mes Actions</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-light">
 
 <div class="container py-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-primary">Mes Actions</h1>
-        <button class="btn btn-outline-primary" @click="loadActions()">🔄 Rafraîchir</button>
+    <div class="mb-4">
+        <button class="btn btn-secondary" @click="goBackToAccounts()">← Retour aux comptes</button>
     </div>
 
     <!-- Formulaire de création -->
@@ -42,7 +40,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <h5 class="card-title">Liste des actions</h5>
-            <div class="table-responsive">
+            <div class="table-responsive" style="max-height:400px; overflow-y:auto;">
                 <table class="table table-striped table-hover">
                     <thead class="table-primary">
                     <tr>
@@ -56,7 +54,7 @@
                         <tr>
                             <td x-text="a.symbol"></td>
                             <td x-text="a.nom"></td>
-                            <td x-text="a.prix + ' €'"></td>
+                            <td x-text="Number(a.prix).toFixed(2) + ' €'"></td>
                         </tr>
                     </template>
                     </tbody>
@@ -66,7 +64,6 @@
     </div>
 
 </div>
-
 <script>
     function actionsComponent() {
         return {
@@ -96,12 +93,11 @@
                     return;
                 }
 
-                // Préparer les données
                 const actionPayload = {
                     clientId: clientId,
                     symbol: this.newAction.symbol,
                     nom: this.newAction.nom,
-                    prix: Number(this.newAction.prix) // conversion en nombre
+                    prix: Number(this.newAction.prix)
                 };
 
                 fetch('/api/actions', {
@@ -117,13 +113,29 @@
                         return res.json();
                     })
                     .then(action => {
-                        this.actions.push(action); // Ajouter au tableau
-                        this.newAction = { symbol: '', nom: '', prix: '' }; // reset formulaire
+                        this.actions.push(action);
+                        this.newAction = { symbol: '', nom: '', prix: '' };
                     })
                     .catch(err => {
                         console.error("Impossible de créer l'action :", err);
                         alert("Impossible de créer l'action : " + err.message);
                     });
+            },
+
+            // Retour aux comptes correct
+            goBackToAccounts() {
+                const token = localStorage.getItem('jwt');
+                const clientId = localStorage.getItem('clientId');
+                if (!token || !clientId) {
+                    alert("Vous devez être connecté !");
+                    return;
+                }
+
+                // Le JWT reste dans localStorage pour l'authentification
+                localStorage.setItem('jwt', token);
+
+                // Redirection vers la route correcte du client
+                window.location.href = `/clients/${clientId}/compteClient`;
             },
 
             init() {
@@ -132,5 +144,6 @@
         }
     }
 </script>
+
 </body>
 </html>
