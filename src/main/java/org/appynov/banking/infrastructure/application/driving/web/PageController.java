@@ -95,4 +95,9 @@ public class PageController {
     public String actionsPage() {
         return "actions";
     }
+    @GetMapping("/market")
+    public String marketPage() {
+        return "market"; // Correspond au market.html
+    }
+
 }
