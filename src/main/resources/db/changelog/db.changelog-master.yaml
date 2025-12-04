@@ -90,4 +90,45 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_users_clients
                     references: clients(id)
+  - changeSet:
+      id: 2025120409000000
+      author: author
+      changes:
+        - createTable:
+            tableName: action
+            columns:
+              - column:
+                  name: id
+                  type: varchar(26)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: varchar(26)
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_action_clients
+                    references: clients(id)
+              - column:
+                  name: symbol
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nom
+                  type: varchar(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: prix
+                  type: double
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_updated
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
 

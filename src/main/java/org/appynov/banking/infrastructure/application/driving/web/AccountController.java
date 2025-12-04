@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api") // Toutes les routes REST passent par /api
+@RequestMapping("/api")
 public class AccountController {
 
     private final CreateAccount createAccount;

@@ -91,4 +91,8 @@ public class PageController {
 
         return "redirect:/clients/" + id + "/compteClient";
     }
+    @GetMapping("/actions")
+    public String actionsPage() {
+        return "actions";
+    }
 }

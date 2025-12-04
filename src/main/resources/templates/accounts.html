@@ -10,8 +10,10 @@
 
 <div class="container mt-5">
 
+    <!-- Bouton déconnexion -->
     <button class="btn btn-danger mb-4" @click="logout()">Déconnexion</button>
 
+    <!-- Titres -->
     <h2 class="text-primary fw-bold">Comptes du client</h2>
     <h4 class="mb-4" th:text="${client.firstName + ' ' + client.lastName}"></h4>
 
@@ -46,7 +48,6 @@
         <div class="card-body">
             <h4 class="card-title mb-4">Créer un nouveau compte</h4>
             <form @submit.prevent="createAccount">
-
                 <div class="mb-3">
                     <label class="form-label">Type :</label>
                     <select class="form-select" x-model="newAccount.type" required>
@@ -73,8 +74,13 @@
         </div>
     </div>
 
+    <!-- Bouton pour créer une action -->
+    <div class="mt-4">
+        <button class="btn btn-primary w-100 fw-bold" @click="goToActions()">Créer mon action</button>
+    </div>
+
 </div>
-<script src="/js/app.js"></script>
+
 <script>
     function accountManager() {
         return {
@@ -84,17 +90,19 @@
                 nom: "[[${client.firstName + ' ' + client.lastName}]]",
                 balance: null
             },
+
+            // Création compte
             createAccount() {
                 if (!this.newAccount.type || this.newAccount.balance === null) {
                     alert("Veuillez remplir tous les champs obligatoires !");
                     return;
                 }
-                // Vérifie que le token existe
                 if (!Auth.token) {
                     alert("Vous devez être connecté pour créer un compte !");
                     return;
                 }
-                fetchWithRedirect('/api/accounts', {
+
+                fetch('/api/accounts', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -107,16 +115,16 @@
                         balance: this.newAccount.balance
                     })
                 })
+                    .then(res => res.json())
                     .then(account => {
                         const tbody = document.querySelector('#accounts-table tbody');
                         const row = document.createElement('tr');
                         row.innerHTML = `<td>${account.id}</td>
-                         <td>${account.type}</td>
-                         <td>${account.nom}</td>
-                         <td>${account.balance}</td>`;
+                                     <td>${account.type}</td>
+                                     <td>${account.nom}</td>
+                                     <td>${account.balance}</td>`;
                         tbody.appendChild(row);
 
-                        // Réinitialiser type et solde
                         this.newAccount.type = '';
                         this.newAccount.balance = null;
                     })
@@ -125,9 +133,40 @@
                         alert("Erreur lors de la création du compte : " + (err.message || JSON.stringify(err)));
                     });
             },
+
+            // Déconnexion
             logout() {
                 Auth.logout();
+            },
+
+            // Redirection vers /actions/courant pour créer une action
+            goToActions() {
+                const token = localStorage.getItem('jwt');
+                if (!token) {
+                    alert("Vous devez être connecté pour créer une action !");
+                    return;
+                }
+
+                fetch('/api/actions/courant', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error("Non autorisé ou problème serveur");
+                        return res.json();
+                    })
+                    .then(actions => {
+                        localStorage.setItem('myActions', JSON.stringify(actions));
+                        window.location.href = '/actions';
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Impossible de récupérer vos actions : " + err.message);
+                    });
             }
+
         }
     }
 </script>

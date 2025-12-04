@@ -41,7 +41,6 @@ public class JpaAccountRepository implements AccountRepository {
         return springRepository.existsById(idCompte);
     }
 
-    // Conversion JPA entity -> Domain
     private Account toDomain(AccountEntity entity) {
         return new Account(
                 entity.getId(),
