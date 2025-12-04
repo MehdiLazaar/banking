@@ -1,5 +1,6 @@
 package org.appynov.banking.infrastructure.application.driving.web.error;
 
+import org.appynov.banking.domain.usecase.FindUser;
 import org.appynov.banking.exception.ClientNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -136,4 +137,14 @@ public class GlobalExceptionHandler {
                         "Access denied: " + ex.getMessage()
                 ));
     }
+    @ExceptionHandler(FindUser.UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(FindUser.UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                        "Nom d'utilisateur ou mot de passe incorrect"
+                ));
+    }
+
 }

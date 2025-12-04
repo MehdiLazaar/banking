@@ -14,12 +14,25 @@ public record User(
         @NotBlank(message = "Idf de l'utilisateur ne peuvent pas être vides")
         String clientId
 ) {
+    /**
+     * Constructeur
+     * @param id        Identifiant unique de l'utilisateur
+     * @param username  Nom d'utilisateur
+     * @param mdpHash   Mot de passe hashé
+     * @param clientId  Identifiant du client associé
+     */
     public User (String id, String username, String mdpHash, String clientId) {
         this.id = id;
         this.username=username;
         this.mdpHash=mdpHash;
         this.clientId=clientId;
     }
+    /**
+     * Constructeur qui génère automatiquement un ID unique pour l'utilisateur.
+     * @param username Nom d'utilisateur
+     * @param mdpHash  Mot de passe hashé
+     * @param clientId Identifiant du client associé
+     */
     public User(String username, String mdpHash, String clientId){
         this(UlidCreator.getUlid().toString(), username, mdpHash, clientId);
     }

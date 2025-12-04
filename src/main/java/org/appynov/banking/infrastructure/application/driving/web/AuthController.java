@@ -7,8 +7,10 @@ import org.appynov.banking.infrastructure.application.driving.web.dto.AuthRespon
 import org.appynov.banking.infrastructure.application.driving.web.dto.LoginRequest;
 import org.appynov.banking.infrastructure.application.driving.web.dto.RegisterRequest;
 import org.appynov.banking.infrastructure.application.driving.web.security.JwtTokenService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 
@@ -46,15 +48,28 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        var user = findUser.by(request.username(), request.password());
-        String token = jwt.generate(user.username(),
-                Map.of("username", user.username(),
-                        "clientId", user.clientId()
-                ));
-        return new AuthResponse(
-                token,
-                user.username(),
-                user.clientId()
-        );
+        try {
+            var user = findUser.by(request.username(), request.password());
+            if (user == null) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Nom d'utilisateur ou mot de passe incorrect");
+            }
+            String token = jwt.generate(user.username(),
+                    Map.of("username", user.username(),
+                            "clientId", user.clientId()
+                    ));
+            return new AuthResponse(
+                    token,
+                    user.username(),
+                    user.clientId()
+            );
+        } catch (Exception e) {
+            e.printStackTrace(); // Pour voir l’erreur exacte dans la console
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Nom d'utilisateur ou mot de passe incorrect"
+            );
+        }
     }
+
+
 }

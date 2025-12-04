@@ -61,8 +61,13 @@
                         window.location.href = `/clients/${resp.clientId}/compteClient`;
                         this.loading = false;
                     })
-                    .catch((e) => {
-                        this.error = e.message || 'Erreur';
+                    .catch(async (e) => {
+                        let msg = 'Nom d\'utilisateur ou mot de passe incorrect';
+                        if (e.response) {
+                            const data = await e.response.json().catch(() => null);
+                            if (data && data.message) msg = data.message;
+                        }
+                        this.error = msg;
                         this.loading = false;
                     });
             }

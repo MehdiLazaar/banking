@@ -12,6 +12,11 @@ public class Client {
     @NotBlank(message = "Le prénom ne peut pas être vide")
     private String firstName;
 
+    /**
+     * Constructeur principal pour créer un Client avec génération automatique de l'ID
+     * @param lastName  Nom de famille
+     * @param firstName Prénom du client
+     */
     public Client(String lastName, String firstName) {
         if (this.id == null){
             this.id = UlidCreator.getUlid().toString();
@@ -19,11 +24,19 @@ public class Client {
         this.firstName = firstName;
         this.lastName = lastName;
     }
+    /**
+     * Constructeur avec un ID explicite.
+     *
+     * @param id        Identifiant unique du client
+     * @param lastName  Nom de famille
+     * @param firstName Prénom du client
+     */
     public Client(String id,String lastName, String firstName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
     }
+    // Getters et Setters
     public String getId(){
         if (this.id == null){
             throw new RuntimeException("ID est null");

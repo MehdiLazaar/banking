@@ -15,10 +15,17 @@ public record Account(
         @NotBlank(message = "Le nom du compte ne peut pas être vide")
         String nom
 ) {
+    //Constructeur avec génération automatique de l'ID
+    /**
+     * @param client_id Id du client
+     * @param balance  Solde du compte
+     * @param type     Type de compte
+     * @param nom      Nom du compte
+     */
     public Account(String client_id, double balance, AccountType type, String nom) {
         this(UlidCreator.getUlid().toString(), client_id, balance, type, nom);
     }
-
+    //Enum pour les types de compte
     public enum AccountType {
         COURANT,
         LIVRET_A,
